@@ -1,7 +1,7 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
-import { SearchFilters, SearchFiltersSkeleton } from "@/components/search-filter";
+import { Navbar } from "@/modules/home/ui/components/navbar";
+import { Footer } from "@/modules/home/ui/components/footer";
+import { SearchFilters, SearchFiltersSkeleton } from "@/modules/home/ui/components/search-filter";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { Suspense } from 'react';
 
@@ -11,15 +11,17 @@ interface Props {
 
 const Layout = async ({ children }: Props) => {
     const queryClient = getQueryClient();
-    void queryClient.prefetchQuery(
+    await queryClient.prefetchQuery(
         trpc.categories.getMany.queryOptions(),
     );
+
+    const dehydratedState = dehydrate(queryClient);
 
     return (
         <div className="flex flex-col min-h-screen">
             <Navbar />
-            <HydrationBoundary state={dehydrate(queryClient)}>
-                <Suspense fallback={<SearchFiltersSkeleton/>}>
+            <HydrationBoundary state={dehydratedState}>
+                <Suspense fallback={<SearchFiltersSkeleton />}>
                     <SearchFilters />
                 </Suspense>
             </HydrationBoundary>
@@ -28,7 +30,7 @@ const Layout = async ({ children }: Props) => {
             </div>
             <Footer />
         </div>
-    )
-}
+    );
+};
 
 export default Layout;
