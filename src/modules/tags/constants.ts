@@ -1,0 +1,1 @@
+export const DEFAULT_TAG_MAX_LIMIT = 8;
