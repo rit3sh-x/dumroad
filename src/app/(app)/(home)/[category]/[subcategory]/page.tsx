@@ -1,27 +1,34 @@
-import { ProductList, ProductListSkeleton } from '@/modules/products/ui/components/product-list';
+import { loadProductFilters } from '@/modules/products/search-params';
+import { ProductListView } from '@/modules/products/ui/views/product-list-view';
+import type { SearchParams } from 'nuqs/server';
 import { getQueryClient, trpc } from '@/trpc/server';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import React, { Suspense } from 'react'
+import { DEFAULT_TAG_MAX_LIMIT } from '@/modules/tags/constants';
 
 interface Props {
     params: Promise<{
         subcategory: string;
     }>
+    searchParams: Promise<SearchParams>
 }
 
-const Category = async ({ params }: Props) => {
+const Subcategory = async ({ params, searchParams }: Props) => {
     const { subcategory } = await params;
     const queryClient = getQueryClient();
-    await queryClient.prefetchQuery(trpc.products.getMany.queryOptions({
-        category: subcategory
+    const filters = await loadProductFilters(searchParams);
+
+    await queryClient.prefetchInfiniteQuery(trpc.products.getMany.infiniteQueryOptions({
+        category: subcategory,
+        ...filters,
+        limit: DEFAULT_TAG_MAX_LIMIT
     }));
+
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <Suspense fallback={<ProductListSkeleton />}>
-                <ProductList category={subcategory}/>
-            </Suspense>
+            <ProductListView category={subcategory} />
         </HydrationBoundary>
     )
 }
 
-export default Category
+export default Subcategory

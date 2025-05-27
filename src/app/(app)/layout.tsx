@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <link rel="icon" href="/icon.svg" sizes="any" />
-      <body className={`antialiased ${dmSans.className} w-screen min-h-screen`}>
+      <body className={`antialiased ${dmSans.className} w-full min-h-screen`}>
         <NuqsAdapter>
           <TRPCReactProvider>
             {children}

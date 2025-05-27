@@ -1,13 +1,16 @@
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 import z from "zod";
 import type { Sort, Where } from "payload";
-import { Category } from "@/payload-types";
+import { Category, Media } from "@/payload-types";
 import { sortValues } from "../search-params";
+import { DEFAULT_TAG_MAX_LIMIT } from "@/modules/tags/constants";
 
 export const productsRouter = createTRPCRouter({
     getMany: baseProcedure
         .input(
             z.object({
+                cursor: z.number().default(1),
+                limit: z.number().default(DEFAULT_TAG_MAX_LIMIT),
                 category: z.string().nullable().optional(),
                 minPrice: z.string().nullable().optional(),
                 maxPrice: z.string().nullable().optional(),
@@ -19,22 +22,22 @@ export const productsRouter = createTRPCRouter({
             const where: Where = {};
             let sort: Sort = "-createdAt";
 
-            if(input.sort === "curated") sort = "-createdAt";
-            if(input.sort === "trending") sort = "+createdAt";
-            if(input.sort === "hot_and_new") sort = "-createdAt";
+            if (input.sort === "curated") sort = "-createdAt";
+            if (input.sort === "trending") sort = "+createdAt";
+            if (input.sort === "hot_and_new") sort = "-createdAt";
 
-            if(input.minPrice && input.maxPrice) {
+            if (input.minPrice && input.maxPrice) {
                 where.price = {
                     less_than_equal: input.maxPrice,
                     greater_than_equal: input.minPrice
                 }
             }
-            else if(input.maxPrice) {
+            else if (input.maxPrice) {
                 where.price = {
                     less_than_equal: input.maxPrice
                 }
             }
-            else if(input.minPrice) {
+            else if (input.minPrice) {
                 where.price = {
                     greater_than_equal: input.minPrice
                 }
@@ -71,7 +74,7 @@ export const productsRouter = createTRPCRouter({
                 }
             }
 
-            if(input.tags && input.tags.length) {
+            if (input.tags && input.tags.length) {
                 where["tags.name"] = {
                     in: input.tags
                 }
@@ -81,9 +84,17 @@ export const productsRouter = createTRPCRouter({
                 collection: "products",
                 depth: 1,
                 where,
-                sort
+                sort,
+                page: input.cursor,
+                limit: input.limit
             })
 
-            return data;
+            return {
+                ...data,
+                docs: data.docs.map((doc) => ({
+                    ...doc,
+                    image: doc.image as Media | null
+                }))
+            };
         })
 })
