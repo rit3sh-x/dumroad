@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/media
 /.pnp
 .pnp.*
 .yarn/*
@@ -32,7 +33,6 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env
-/media/
 
 # vercel
 .vercel
