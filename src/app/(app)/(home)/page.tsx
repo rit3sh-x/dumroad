@@ -10,7 +10,7 @@ interface Props {
     searchParams: Promise<SearchParams>
 }
 
-const Category = async ({ searchParams }: Props) => {
+const Home = async ({ searchParams }: Props) => {
     const queryClient = getQueryClient();
     const filters = await loadProductFilters(searchParams);
 
@@ -26,4 +26,4 @@ const Category = async ({ searchParams }: Props) => {
     )
 }
 
-export default Category;
+export default Home;
