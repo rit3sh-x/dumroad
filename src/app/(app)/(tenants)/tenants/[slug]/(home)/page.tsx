@@ -7,28 +7,26 @@ import { ProductListView } from '@/modules/products/ui/views/product-list-view';
 import { DEFAULT_TAG_MAX_LIMIT } from '@/constants';
 
 interface Props {
-    params: Promise<{
-        category: string;
-    }>
     searchParams: Promise<SearchParams>
+    params: Promise<{ slug: string }>
 }
 
-const Category = async ({ params, searchParams }: Props) => {
-    const { category } = await params;
+const Home = async ({ searchParams, params }: Props) => {
+    const { slug } = await params;
     const queryClient = getQueryClient();
     const filters = await loadProductFilters(searchParams);
 
     await queryClient.prefetchInfiniteQuery(trpc.products.getMany.infiniteQueryOptions({
-        category: category,
         ...filters,
+        tenantSlug: slug,
         limit: DEFAULT_TAG_MAX_LIMIT
     }));
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <ProductListView category={category} />
+            <ProductListView tenantSlug={slug} narrowView/>
         </HydrationBoundary>
     )
 }
 
-export default Category;
+export default Home;

@@ -3,8 +3,8 @@ import { ProductListView } from '@/modules/products/ui/views/product-list-view';
 import type { SearchParams } from 'nuqs/server';
 import { getQueryClient, trpc } from '@/trpc/server';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import React, { Suspense } from 'react'
-import { DEFAULT_TAG_MAX_LIMIT } from '@/modules/tags/constants';
+import React from 'react'
+import { DEFAULT_TAG_MAX_LIMIT } from '@/constants';
 
 interface Props {
     params: Promise<{

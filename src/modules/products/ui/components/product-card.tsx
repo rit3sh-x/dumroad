@@ -1,13 +1,15 @@
+import { generateTenantURL } from "@/lib/utils";
 import { StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
     id: string;
     name: string;
     imageUrl?: string | null;
-    authorUsername: string;
-    authorAvatarUrl?: string | null;
+    tenantSlug: string;
+    tenantProfileUrl?: string | null;
     price: number;
     reviewsCount: number;
     rating: number;
@@ -17,12 +19,19 @@ export const ProductCard = ({
     id,
     name,
     imageUrl,
-    authorUsername,
-    authorAvatarUrl,
+    tenantSlug,
+    tenantProfileUrl,
     price,
     reviewsCount,
     rating,
 }: ProductCardProps) => {
+    const router = useRouter();
+    const handleUserClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        router.push(generateTenantURL(tenantSlug))
+    }
+
     return (
         <Link href={"/"}>
             <div className="hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow border rounded-md bg-white overflow-hidden h-full flex flex-col">
@@ -31,11 +40,11 @@ export const ProductCard = ({
                 </div>
                 <div className="p-4 border-y flex flex-col gap-3 flex-1">
                     <h2 className="text-lg font-medium line-clamp-4">{name}</h2>
-                    <div className="flex items-center gap-2" onClick={() => { }}>
-                        {authorAvatarUrl && (
-                            <Image alt={authorUsername} src={authorAvatarUrl} className="rounded-full border shrink-0 size-[16px]" width={16} height={16} />
+                    <div className="flex items-center gap-2" onClick={handleUserClick}>
+                        {tenantProfileUrl && (
+                            <Image alt={tenantSlug} src={tenantProfileUrl} className="rounded-full border shrink-0 size-[16px]" width={16} height={16} />
                         )}
-                        <p className="text-sm underline font-medium">{authorUsername}</p>
+                        <p className="text-sm underline font-medium">{tenantSlug}</p>
                     </div>
                     {reviewsCount > 0 && (
                         <div className="flex items-center gap-1">

@@ -1,5 +1,5 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { DEFAULT_TAG_MAX_LIMIT } from "@/modules/tags/constants";
+import { DEFAULT_TAG_MAX_LIMIT } from "@/constants";
 import { useTRPC } from "@/trpc/client";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { LoaderIcon } from "lucide-react";
