@@ -43,7 +43,7 @@ export const Products: CollectionConfig = {
             relationTo: "media"
         },
         {
-            name: "refundPollicy",
+            name: "refundPolicy",
             type: "select",
             options: ["30 Day", "14 Day", "7 Day", "3 Day", "1 Day", "No Refunds"],
             defaultValue: "30 Day"

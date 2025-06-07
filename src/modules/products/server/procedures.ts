@@ -4,6 +4,7 @@ import type { Sort, Where } from "payload";
 import { Category, Media, Tenant } from "@/payload-types";
 import { sortValues } from "../search-params";
 import { DEFAULT_TAG_MAX_LIMIT } from "@/constants";
+import { TRPCError } from "@trpc/server";
 
 export const productsRouter = createTRPCRouter({
     getOne: baseProcedure
@@ -12,20 +13,24 @@ export const productsRouter = createTRPCRouter({
                 id: z.string()
             })
         )
-        .query(async ({ ctx, input }) => {
-            const product = await ctx.db.findByID({
-                collection: "products",
-                id: input.id,
-                depth: 2
-            })
+.query(async ({ ctx, input }) => {
+     const product = await ctx.db.findByID({
+         collection: "products",
+         id: input.id,
+         depth: 2
+     })
 
-            return {
-                ...product,
-                cover: product.cover as Media | null,
-                image: product.cover as Media | null,
-                tenant: product.tenant as Tenant & { image: Media | null }
-            }
-        }),
+    if (!product) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Product not found" });
+    }
+
+     return {
+         ...product,
+         cover: product.cover as Media | null,
+        image: product.image as Media | null,
+         tenant: product.tenant as Tenant & { image: Media | null }
+     }
+ }),
     getMany: baseProcedure
         .input(
             z.object({
