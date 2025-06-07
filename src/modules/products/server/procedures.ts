@@ -6,6 +6,26 @@ import { sortValues } from "../search-params";
 import { DEFAULT_TAG_MAX_LIMIT } from "@/constants";
 
 export const productsRouter = createTRPCRouter({
+    getOne: baseProcedure
+        .input(
+            z.object({
+                id: z.string()
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const product = await ctx.db.findByID({
+                collection: "products",
+                id: input.id,
+                depth: 2
+            })
+
+            return {
+                ...product,
+                cover: product.cover as Media | null,
+                image: product.cover as Media | null,
+                tenant: product.tenant as Tenant & { image: Media | null }
+            }
+        }),
     getMany: baseProcedure
         .input(
             z.object({
@@ -44,7 +64,7 @@ export const productsRouter = createTRPCRouter({
                 }
             }
 
-            if(input.tenantSlug) {
+            if (input.tenantSlug) {
                 where["tenant.slug"] = {
                     equals: input.tenantSlug
                 }
@@ -101,7 +121,7 @@ export const productsRouter = createTRPCRouter({
                 docs: data.docs.map((doc) => ({
                     ...doc,
                     image: doc.image as Media | null,
-                    tenant: doc.tenant as Tenant & { image: Media | null}
+                    tenant: doc.tenant as Tenant & { image: Media | null }
                 }))
             };
         })
