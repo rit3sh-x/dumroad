@@ -99,7 +99,7 @@ export const ProductView = ({ productId, slug }: ProductViewProps) => {
                                     </Button>
                                 </div>
                                 <p className="text-center font-medium">
-                                    {data.refundPollicy === "No Refunds" ? "No Refunds" : `${data.refundPollicy} money back guaranteed`}
+                                    {data.refundPolicy === "No Refunds" ? "No Refunds" : `${data.refundPolicy} money back guaranteed`}
                                 </p>
                             </div>
                             <div className="p-6">

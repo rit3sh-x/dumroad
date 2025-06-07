@@ -228,7 +228,7 @@ export interface Product {
   tags?: (string | null) | Tag;
   image?: (string | null) | Media;
   cover?: (string | null) | Media;
-  refundPollicy?: ('30 Day' | '14 Day' | '7 Day' | '3 Day' | '1 Day' | 'No Refunds') | null;
+  refundPolicy?: ('30 Day' | '14 Day' | '7 Day' | '3 Day' | '1 Day' | 'No Refunds') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -384,7 +384,7 @@ export interface ProductsSelect<T extends boolean = true> {
   tags?: T;
   image?: T;
   cover?: T;
-  refundPollicy?: T;
+  refundPolicy?: T;
   updatedAt?: T;
   createdAt?: T;
 }

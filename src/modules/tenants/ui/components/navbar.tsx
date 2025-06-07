@@ -8,9 +8,9 @@ import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { ShoppingCartIcon } from "lucide-react";
 
-const CheckouButton = dynamic(
+const CheckoutButton = dynamic(
     () => import("@/modules/checkout/ui/components/checkout-button").then(
-        (mod) => mod.CheckouButton,
+        (mod) => mod.CheckoutButton,
     ),
     {
         ssr: false,
@@ -45,7 +45,7 @@ export const Navbar = ({ slug }: Props) => {
                     )}
                     <p className="text-xl">{data.name}</p>
                 </Link>
-                <CheckouButton hideIfEmpty tenantSlug={slug} />
+                <CheckoutButton hideIfEmpty tenantSlug={slug} />
             </div>
         </nav>
     )

@@ -10,7 +10,7 @@ interface CheckoutButtonProps {
     tenantSlug: string;
 }
 
-export const CheckouButton = ({ className, hideIfEmpty, tenantSlug }: CheckoutButtonProps) => {
+export const CheckoutButton = ({ className, hideIfEmpty, tenantSlug }: CheckoutButtonProps) => {
     const cart = useCart(tenantSlug);
 
     if (hideIfEmpty && cart.totalItems == 0) return null;
