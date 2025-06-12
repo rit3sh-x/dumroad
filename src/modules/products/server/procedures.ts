@@ -5,6 +5,7 @@ import { Category, Media, Tenant } from "@/payload-types";
 import { sortValues } from "../search-params";
 import { DEFAULT_TAG_MAX_LIMIT } from "@/constants";
 import { TRPCError } from "@trpc/server";
+import { headers as getHeaders } from "next/headers";
 
 export const productsRouter = createTRPCRouter({
     getOne: baseProcedure
@@ -13,24 +14,96 @@ export const productsRouter = createTRPCRouter({
                 id: z.string()
             })
         )
-.query(async ({ ctx, input }) => {
-     const product = await ctx.db.findByID({
-         collection: "products",
-         id: input.id,
-         depth: 2
-     })
+        .query(async ({ ctx, input }) => {
+            const headers = await getHeaders();
+            const session = await ctx.db.auth({ headers });
 
-    if (!product) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Product not found" });
-    }
+            const product = await ctx.db.findByID({
+                collection: "products",
+                id: input.id,
+                depth: 2,
+                select: {
+                    content: false
+                }
+            })
 
-     return {
-         ...product,
-         cover: product.cover as Media | null,
-        image: product.image as Media | null,
-         tenant: product.tenant as Tenant & { image: Media | null }
-     }
- }),
+            if (!product) {
+                throw new TRPCError({ code: "NOT_FOUND", message: "Product not found" });
+            }
+            
+            if(product.isArchived) {
+                throw new TRPCError({ code: "NOT_FOUND", message: "Product not found" });
+            }
+
+            let isPurchaned = false;
+
+            if (session.user) {
+                const orderData = await ctx.db.find({
+                    collection: "orders",
+                    pagination: false,
+                    limit: 1,
+                    where: {
+                        and: [
+                            {
+                                product: {
+                                    equals: input.id
+                                }
+                            },
+                            {
+                                user: {
+                                    equals: session.user.id
+                                }
+                            }
+                        ]
+                    }
+                })
+
+                isPurchaned = !!orderData.docs[0];
+            }
+
+            const reviews = await ctx.db.find({
+                collection: "reviews",
+                pagination: false,
+                where: {
+                    product: {
+                        equals: input.id
+                    }
+                }
+            })
+
+            const reviewRating = reviews.docs.length > 0 ? reviews.docs.reduce((acc, review) => acc + review.rating, 0) : 0;
+
+            const ratingDistribution: Record<number, number> = {
+                5: 0,
+                4: 0,
+                3: 0,
+                2: 0,
+                1: 0,
+            }
+
+            if (reviews.totalDocs > 0) {
+                reviews.docs.forEach((review) => {
+                    const rating = review.rating;
+                    if (rating >= 1 && rating <= 5) ratingDistribution[rating] = (ratingDistribution[rating] || 0) + 1;
+                });
+                Object.keys(ratingDistribution).forEach((key) => {
+                    const rating = Number(key);
+                    const count = ratingDistribution[rating] || 0;
+                    ratingDistribution[rating] = Math.round(count / reviews.totalDocs) * 100;
+                })
+            }
+
+            return {
+                ...product,
+                reviewCount: reviews.totalDocs,
+                reviewRating: reviewRating,
+                ratingDistribution: ratingDistribution,
+                isPurchased: isPurchaned,
+                cover: product.cover as Media | null,
+                image: product.image as Media | null,
+                tenant: product.tenant as Tenant & { image: Media | null }
+            }
+        }),
     getMany: baseProcedure
         .input(
             z.object({
@@ -45,7 +118,11 @@ export const productsRouter = createTRPCRouter({
             })
         )
         .query(async ({ ctx, input }) => {
-            const where: Where = {};
+            const where: Where = {
+                isArchived: {
+                    not_equals: true
+                }
+            };
             let sort: Sort = "-createdAt";
 
             if (input.sort === "curated") sort = "-createdAt";
@@ -72,6 +149,10 @@ export const productsRouter = createTRPCRouter({
             if (input.tenantSlug) {
                 where["tenant.slug"] = {
                     equals: input.tenantSlug
+                }
+            } else {
+                where["isPrivate"] = {
+                    not_equals: true
                 }
             }
 
@@ -118,12 +199,37 @@ export const productsRouter = createTRPCRouter({
                 where,
                 sort,
                 page: input.cursor,
-                limit: input.limit
+                limit: input.limit,
+                select: {
+                    content: false
+                }
             })
+
+            const dataWithSummarizedReviews = await Promise.all(
+                data.docs.map(async (doc) => {
+                    const review = await ctx.db.find({
+                        collection: "reviews",
+                        pagination: false,
+                        where: {
+                            product: {
+                                equals: doc.id
+                            }
+                        }
+                    })
+                    return {
+                        ...doc,
+                        reviewCount: review.totalDocs,
+                        reviewRating:
+                            review.docs.length === 0
+                                ? 0
+                                : review.docs.reduce((acc, rev) => acc + rev.rating, 0) / review.totalDocs
+                    }
+                })
+            )
 
             return {
                 ...data,
-                docs: data.docs.map((doc) => ({
+                docs: dataWithSummarizedReviews.map((doc) => ({
                     ...doc,
                     image: doc.image as Media | null,
                     tenant: doc.tenant as Tenant & { image: Media | null }

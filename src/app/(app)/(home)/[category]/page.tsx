@@ -18,7 +18,7 @@ const Category = async ({ params, searchParams }: Props) => {
     const queryClient = getQueryClient();
     const filters = await loadProductFilters(searchParams);
 
-    await queryClient.prefetchInfiniteQuery(trpc.products.getMany.infiniteQueryOptions({
+    void queryClient.prefetchInfiniteQuery(trpc.products.getMany.infiniteQueryOptions({
         category: category,
         ...filters,
         limit: DEFAULT_TAG_MAX_LIMIT

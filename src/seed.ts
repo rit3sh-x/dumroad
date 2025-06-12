@@ -1,5 +1,6 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import { stripe } from './lib/stripe';
 
 const categories = [
     {
@@ -139,6 +140,21 @@ const categories = [
 
 const seed = async () => {
     const payload = await getPayload({ config: configPromise });
+
+    const account = await stripe.accounts.create({});
+
+    if (!account) {
+        throw new Error("Failed to create Stripe account")
+    }
+
+    const adminTenant = await payload.create({
+        collection: "tenants",
+        data: {
+            name: "admin",
+            slug: "admin",
+            stripeAccountId: account.id
+        }
+    })
 
     await payload.create({
         collection: "users",

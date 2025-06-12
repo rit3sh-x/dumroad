@@ -21,9 +21,9 @@ export const formatAsCurrency = (value: string) => {
     const parsedValue = parseFloat(formattedVlaue);
     if (isNaN(parsedValue)) return "";
 
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("en-IN", {
         style: "currency",
-        currency: "USD",
+        currency: "INR",
         maximumFractionDigits: 2,
         minimumFractionDigits: 0
     }).format(parsedValue);

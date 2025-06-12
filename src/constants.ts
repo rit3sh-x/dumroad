@@ -1,1 +1,2 @@
 export const DEFAULT_TAG_MAX_LIMIT = 8;
+export const PLATFORM_FREE_PERCENTAGE = 10;
