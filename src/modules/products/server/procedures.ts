@@ -30,8 +30,8 @@ export const productsRouter = createTRPCRouter({
             if (!product) {
                 throw new TRPCError({ code: "NOT_FOUND", message: "Product not found" });
             }
-            
-            if(product.isArchived) {
+
+            if (product.isArchived) {
                 throw new TRPCError({ code: "NOT_FOUND", message: "Product not found" });
             }
 
@@ -112,6 +112,7 @@ export const productsRouter = createTRPCRouter({
                 category: z.string().nullable().optional(),
                 minPrice: z.string().nullable().optional(),
                 maxPrice: z.string().nullable().optional(),
+                search: z.string().nullable().optional(),
                 tags: z.array(z.string()).nullable().optional(),
                 sort: z.enum(sortValues).nullable().optional(),
                 tenantSlug: z.string().nullable().optional(),
@@ -190,6 +191,12 @@ export const productsRouter = createTRPCRouter({
             if (input.tags && input.tags.length) {
                 where["tags.name"] = {
                     in: input.tags
+                }
+            }
+
+            if (input.search) {
+                where["name"] = {
+                    like: input.search
                 }
             }
 

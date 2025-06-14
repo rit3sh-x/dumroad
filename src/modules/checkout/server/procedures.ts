@@ -6,6 +6,7 @@ import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { CheckoutMetadata, ProductMetadata } from "../types";
 import { PLATFORM_FREE_PERCENTAGE } from "@/constants";
+import { generateTenantURL } from "@/lib/utils";
 
 export const checkoutRouter = createTRPCRouter({
     verify: protectedProcedure
@@ -36,7 +37,7 @@ export const checkoutRouter = createTRPCRouter({
                     message: "Tenant not found",
                 })
             }
-
+            
             const accountLink = await stripe.accountLinks.create({
                 account: tenant.stripeAccountId,
                 refresh_url: `${process.env.NEXT_PUBLIC_APP_URL}/admin`,
@@ -117,7 +118,7 @@ export const checkoutRouter = createTRPCRouter({
                 products.docs.map((product) => ({
                     quantity: 1,
                     price_data: {
-                        currency: 'usd',
+                        currency: 'inr',
                         unit_amount: product.price * 100,
                         product_data: {
                             name: product.name,
@@ -133,12 +134,14 @@ export const checkoutRouter = createTRPCRouter({
 
             const totalAmout = products.docs.reduce((acc, item) => acc + item.price * 100, 0);
 
-            const platformFree = Math.round((totalAmout * PLATFORM_FREE_PERCENTAGE) / 100)
+            const platformFree = Math.round((totalAmout * PLATFORM_FREE_PERCENTAGE) / 100);
+
+            const domain = generateTenantURL(input.tenantSlug);
 
             const checkout = await stripe.checkout.sessions.create({
                 customer_email: ctx.session.user.email,
-                success_url: `${process.env.NEXT_PUBLIC_APP_URL}/tenants/${input.tenantSlug}/checkout?success=true`,
-                cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/tenants/${input.tenantSlug}/checkout?success=false`,
+                success_url: `${domain}/checkout?success=true`,
+                cancel_url: `${domain}/checkout?success=false`,
                 mode: "payment",
                 line_items: lineItems,
                 invoice_creation: {

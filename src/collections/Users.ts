@@ -34,7 +34,15 @@ export const Users: CollectionConfig = {
     hidden: ({ user }) => !isSuperAdmin(user),
     useAsTitle: 'email',
   },
-  auth: true,
+  auth: {
+    cookies: {
+      ...(process.env.NEXT_PUBLIC_SUBDOMAIN_ROUTING_ENABLED === "true" && {
+        sameSite: "None",
+        domain: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
+        secure: true
+      })
+    }
+  },
   fields: [
     {
       name: "username",

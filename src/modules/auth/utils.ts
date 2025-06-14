@@ -12,7 +12,11 @@ export const generateAuthCookie = async ({ prefix, value }: Props) => {
         name: `${prefix}-token`,
         value: value,
         httpOnly: true,
-        path: "/"
-        // TODO: add cross domain cookie sharing
+        path: "/",
+        ...(process.env.NEXT_PUBLIC_SUBDOMAIN_ROUTING_ENABLED === "true" && {
+            sameSite: "none",
+            domain: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
+            secure: true
+        })
     })
 }

@@ -4,7 +4,7 @@ import Link from "next/link";
 
 interface Props {
     category: CategoriesGetManyOutput[1];
-    isOpen: Boolean;
+    isOpen: boolean;
 }
 
 export const SubcategoryMenu = ({ category, isOpen }: Props) => {

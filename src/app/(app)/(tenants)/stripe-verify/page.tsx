@@ -9,9 +9,11 @@ const Page = () => {
     const trpc = useTRPC();
     const { mutate: verify } = useMutation(trpc.checkout.verify.mutationOptions({
         onSuccess: (data) => {
+            console.log(data);
             window.location.href = data.url;
         },
-        onError: () => {
+        onError: (error) => {
+            console.log(error)
             window.location.href = "/";
         },
     }));
@@ -31,10 +33,10 @@ const Page = () => {
                 
                 <div className="space-y-2">
                     <p className="text-muted-foreground">
-                        We're connecting to Stripe to verify your account details.
+                        We&#39;re connecting to Stripe to verify your account details.
                     </p>
                     <p className="text-sm text-muted-foreground">
-                        You'll be redirected automatically. Please don't close this window.
+                        You&#39;ll be redirected automatically. Please don&#39;t close this window.
                     </p>
                 </div>
             </div>

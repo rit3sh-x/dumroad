@@ -1,6 +1,5 @@
 import { protectedProcedure, createTRPCRouter } from "@/trpc/init";
 import z from "zod";
-import { DEFAULT_TAG_MAX_LIMIT } from "@/constants";
 import { TRPCError } from "@trpc/server";
 
 export const reviewsRouter = createTRPCRouter({

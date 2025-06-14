@@ -2,19 +2,19 @@
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { SubcategoryMenu } from "./subcategory-menu";
 import Link from "next/link";
 import { CategoriesGetManyOutput } from "@/modules/categories/types";
 
 interface Props {
     category: CategoriesGetManyOutput[1],
-    isActive?: Boolean,
-    isNavigationHovered?: Boolean
+    isActive?: boolean,
+    isNavigationHovered?: boolean
 }
 
 export const CategoryDropdown = ({ category, isActive, isNavigationHovered }: Props) => {
-    const [isOpen, setIsOpen] = useState<Boolean>(false);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const onMouseEnter = () => {
         if (category.subcategories) {

@@ -46,13 +46,13 @@ export const PriceFilter = ({ minPrice, maxPrice, onMinPriceChange, onMaxPriceCh
                 <Label className="font-medium text-base">
                     Minimum price
                 </Label>
-                <Input type="text" placeholder="$0" value={minPrice ? formatAsCurrency(minPrice) : ""} onChange={handleMinPriceChange} className="" />
+                <Input type="text" placeholder="₹0" value={minPrice ? formatAsCurrency(minPrice) : ""} onChange={handleMinPriceChange} className="" />
             </div>
             <div className="flex flex-col gap-2">
                 <Label className="font-medium text-base">
                     Maximum price
                 </Label>
-                <Input type="text" placeholder="$10000" value={maxPrice ? formatAsCurrency(maxPrice) : ""} onChange={handleMaxPriceChange} className="" />
+                <Input type="text" placeholder="₹10000" value={maxPrice ? formatAsCurrency(maxPrice) : ""} onChange={handleMaxPriceChange} className="" />
             </div>
         </div>
     )
