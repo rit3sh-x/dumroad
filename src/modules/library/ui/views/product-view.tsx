@@ -57,7 +57,7 @@ export const ProductView = ({ productId }: Props) => {
 export const ProductViewSkeleton = () => {
     return (
         <div className="min-h-screen bg-white">
-            <nav className="p-4 bg-[#F4F4F0] w-full border-b">
+            <nav className="p-4 bg-[#F4F4F0] w-full border-b border-opacity-50">
                 <div className="flex items-center gap-2 opacity-50">
                     <ArrowLeftIcon className="size-4" />
                     <span className="text font-medium">
@@ -65,7 +65,7 @@ export const ProductViewSkeleton = () => {
                     </span>
                 </div>
             </nav>
-            <header className="bg-[#F4F4F0] py-8 border-b">
+            <header className="bg-[#F4F4F0] py-8 border-b border-opacity-50">
                 <div className="max-w-(--breakpoint-2xl) mx-auto px-4 lg:px-12">
                     <div className="h-[40px] bg-gray-200 w-2/3 rounded-md animate-pulse" />
                 </div>
@@ -73,7 +73,7 @@ export const ProductViewSkeleton = () => {
             <section className="max-w-(--breakpoint-2xl) mx-auto px-4 lg:px-12 py-4">
                 <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 lg:gap-16">
                     <div className="lg:col-span-2">
-                        <div className="p-4 bg-white rounded-md border gap-4">
+                        <div className="p-4 bg-white rounded-md border border-opacity-50 gap-4">
                             <ReviewFormSkeleton />
                         </div>
                     </div>
