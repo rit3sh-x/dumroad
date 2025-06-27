@@ -71,7 +71,7 @@ Dumroad is a modern, multi-tenant digital marketplace built with a powerful stac
 1. **Start the development server:**
 
    ```bash
-   bun dev
+   bun run dev
    ```
 
 2. **Seed the database (optional):**
@@ -79,7 +79,7 @@ Dumroad is a modern, multi-tenant digital marketplace built with a powerful stac
    To populate the database with initial data, run:
 
    ```bash
-   bun db:seed
+   bun run db:seed
    ```
 
    The application will be available at `http://localhost:3000`.
@@ -152,10 +152,6 @@ Utility functions in `src/lib` support authentication, access control, and other
 ### 6. Admin & Content Management
 
 Payload CMS provides an admin UI (configured in `src/payload.config.ts`) for managing collections, users, and content. Admins and vendors can use this interface to manage products, orders, and more.
-
----
-
-In summary, Dumroad’s codebase is organized for clarity and scalability, with a strong separation of concerns between frontend, backend, business logic, and data management. The use of tRPC and Payload CMS ensures type safety and flexibility throughout the stack.
 
 ## Contributing
 
